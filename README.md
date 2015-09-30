@@ -15,8 +15,7 @@ Functions:
 
 * Access to the domain controller
 * Server 2012 R2 *or*
-* Server 2008, 2008 R2, or 2012 with KBKB2800945
-    https://support.microsoft.com/en-us/kb/2800945/en-us
+* Server 2008, 2008 R2, or 2012 with [KB2800945](https://support.microsoft.com/en-us/kb/2800945/en-us)
 
 ## Instructions
 
