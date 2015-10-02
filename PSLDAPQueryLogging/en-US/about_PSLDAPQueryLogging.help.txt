@@ -4,14 +4,42 @@ http://blogs.technet.com/b/askpfeplat/archive/2015/05/11/how-to-find-expensive-i
 
 Functions:
 
-* Test-LDAPQueryLoggingPrerequisites: Check to see if a domain controller meets the prerequisites for this logging
-* Enable-LDAPQueryLogging           : Enable diagnostic logging and set parameters as discussed by Mark
-* Get-LDAPQueryLogging              : Check the current state, including whether logging is enabled, and parameter values.
-* Disable-LDAPQueryLogging          : Disable diagnostic logging and set parameters back to defaults
+    * Test-LDAPQueryLoggingPrerequisites: Check to see if a domain controller meets the prerequisites for this logging
+    * Enable-LDAPQueryLogging           : Enable diagnostic logging and set parameters as discussed by Mark
+    * Get-LDAPQueryLogging              : Check the current state, including whether logging is enabled, and parameter values.
+    * Disable-LDAPQueryLogging          : Disable diagnostic logging and set parameters back to defaults
 
 Prerequisites:
 
-* Access to the domain controller
-* Server 2012 R2 *or*
-* Server 2008, 2008 R2, or 2012 with KBKB2800945
-    https://support.microsoft.com/en-us/kb/2800945/en-us
+    * Access to the domain controller
+    * Server 2012 R2 *or*
+    * Server 2008, 2008 R2, or 2012 with KBKB2800945
+        https://support.microsoft.com/en-us/kb/2800945/en-us
+
+Example Scenario:
+
+    # Import the module
+        Import-Module PSLDAPQueryLogging -force
+
+    # Get domain controllers using the ActiveDirectory module
+    $DCs = Get-ADDomainController -Filter * | Select -ExpandProperty Name
+
+    # Enable logging temporarily on the domain controllers
+    # We set search time threshold covering queries under over 30 ms (default is 100 ms)
+    $DCs | Enable-LDAPQueryLogging -SearchTimeThreshold 30
+
+    # Wait a bit
+    "$(Get-Date): Sleeping 10 minutes..."
+    Start-Sleep -Seconds (10*60)
+
+    # Collect your logs!
+    # Many ways to do this. Not PowerShell, but I find wevtutil to be quite fast.
+    $Comp = $ENV:ComputerName
+    Invoke-Command -ComputerName $DCs -ScriptBlock {wevtutil epl 'Directory Service' "\\$Using:Comp\c$\$ENV:ComputerName-Evil.evtx"}
+
+    # Disable the logging...
+    $DCs | Disable-LDAPQueryLogging
+
+    # Parse events as desired, perhaps using Ming's script
+        # https://gallery.technet.microsoft.com/scriptcenter/Event-1644-reader-Export-45205268
+        dir C:\*evil.evtx
