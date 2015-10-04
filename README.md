@@ -107,4 +107,3 @@ Stuff that might be fun:
 * Parse the logs. Maybe leave this to [the script](https://gallery.technet.microsoft.com/scriptcenter/Event-1644-reader-Export-45205268) from Ming Chen. Would be nice to have this analysis without COM though...
 * Add rudimentary tests
 * Clean up code and output
-* Write an investigation-oriented blog post, when life calms down a bit : )
